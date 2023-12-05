@@ -1,12 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import reportWebVitals from './reportWebVitals';
-import Board from './components/Board.js';
+import App from './App.js';
+import './App.css';
+import './index.css';
+
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <Board></Board>
+    <App></App>
   </React.StrictMode>
 );
 
