@@ -1,5 +1,5 @@
 .rainbow-button {
-    width: 100px;
+    width: 130px;
     height: 25px;
     border: 1px solid white;
     outline: none;
@@ -10,6 +10,8 @@
     z-index: 0;
     border-radius: 10px;
     margin-bottom: 5px;
+    font-weight: bold;
+    font-size: 20px;
   }
   
   .rainbow-button:before {
@@ -30,10 +32,10 @@
   }
   
   .rainbow-button:active {
-    color: #000
+    color: black;
   }
   
-  rainbow-button:active:after {
+  .rainbow-button:active:after {
     background: transparent;
   }
   

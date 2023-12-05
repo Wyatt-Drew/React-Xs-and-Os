@@ -42,10 +42,15 @@ function Game() {
   };
 
   const winner = calculateWinner(board);
-  const status = winner
+  let status;
+  if (winner === 'Tie') {
+    status = 'It\'s a tie!';
+  } else {
+  status = 
+  winner
     ? `Winner: ${winner}`
     : `Next player: ${xIsNext ? 'X' : 'O'}`;
-
+  }
   return (
     <div className="game">
       <button className="rainbow-button" onClick={resetGame}>
@@ -85,7 +90,9 @@ function calculateWinner(squares) {
       return squares[a]; // Return the winning symbol (X or O)
     }
   }
-
+  if (squares.every((square) => square)) {
+    return 'Tie'; // Return 'Tie' if all squares are filled with no winner
+  }
   return null; // no winner
 }
 
