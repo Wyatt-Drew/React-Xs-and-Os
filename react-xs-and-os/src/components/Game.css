@@ -17,16 +17,25 @@
 .square {
   width: 100px;
   height: 100px;
-  font-size: 50px;
+  font-size: 0px;
   text-align: center;
   border: 2px solid black;
   cursor: pointer;
   vertical-align: top;
+}
+.square.clicked{
+  transition: font-size 0.3s ease;
+  font-size: 50px;
+}
+.square.winning{
+  background-color: #228B22; 
 }
 
 .square:hover:not(.clicked) {
   background-color: #333; 
 }
 .status{
-  color: white;
+  color: #228B22;
+  font-size: 24px;
+  font-style: bold;
 }
