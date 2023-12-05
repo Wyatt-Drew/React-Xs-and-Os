@@ -1,11 +1,17 @@
 import './Game.css';
+import './RainbowButton.css';
 import React, { useState } from 'react';
 
 function Game() {
   const [board, setBoard] = useState(Array(9).fill(null));
   const [winningSquares, setWinningSquares] = useState([]);
   const [xIsNext, setXIsNext] = useState(true);
-
+  
+  const resetGame = ()  => {
+    setBoard(Array(9).fill(null));
+    setWinningSquares([]);
+    setXIsNext(true);
+  }
   const handleClick = (index) => {
     const newBoard = [...board];
     if (calculateWinner(newBoard) || newBoard[index]) {
@@ -42,6 +48,9 @@ function Game() {
 
   return (
     <div className="game">
+      <button className="rainbow-button" onClick={resetGame}>
+        New Game
+      </button>
       <div className="board">
         <div className="board-row">
           {renderSquare(0)}
@@ -63,7 +72,6 @@ function Game() {
     </div>
   );
 }
-
 function calculateWinner(squares) {
   const lines = [
     [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
