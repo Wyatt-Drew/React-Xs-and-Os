@@ -9,7 +9,7 @@ function Game() {
   const [computerEnabled, setComputerEnabled] = useState(false);
   const [playerHasMoved, setPlayerHasMoved] = useState(null);
   const [singlePlayerScore, setSinglePlayerScore] = useState([0,0,0]);
-  const [twoPlayerScore, setTwoPlayerScore] = useState([0,0,0]);
+  const [twoPlayerScore, setTwoPlayerScore] = useState([1,2,3]);
   
   const resetGame = ()  => {
     setBoard(Array(9).fill(null));
@@ -23,12 +23,12 @@ function Game() {
   }
   const move = (index) => {
     const newBoard = [...board];
-    if (calculateWinner(newBoard) || newBoard[index]) {
+    if (calculateWinner(newBoard, updateScores) || newBoard[index]) {
       return; // do nothing if there's a winner or sq is full
     }
     newBoard[index] = xIsNext ? 'X' : 'O';
 
-    const winner = calculateWinner(newBoard);
+    const winner = calculateWinner(newBoard, updateScores);
     if (winner) {
       setWinningSquares(calculateWinningSquares(newBoard, winner));
     }
@@ -68,9 +68,15 @@ function Game() {
     } else if (playerHasMoved !== null) {
       move(playerHasMoved);
     }
-  
-    const winner = calculateWinner(board);
+
+    const winner = calculateWinner(board, updateScores);
     if (winner) {
+      const updatedScores = updateScores(winner);
+      if (computerEnabled) {
+        setSinglePlayerScore(updatedScores);
+      } else {
+        setTwoPlayerScore(updatedScores);
+      }
       setWinningSquares(calculateWinningSquares(board, winner));
     }
   }, [playerHasMoved, xIsNext, computerEnabled, board]);
@@ -88,22 +94,39 @@ function Game() {
       </button>
     );
   };
+  const updateScores = (winner) => {
+    if (winner === 'X') {
+      return computerEnabled
+        ? [singlePlayerScore[0] + 1, singlePlayerScore[1], singlePlayerScore[2]]
+        : [twoPlayerScore[0] + 1, twoPlayerScore[1], twoPlayerScore[2]];
+    } else if (winner === 'O') {
+      return computerEnabled
+        ? [singlePlayerScore[0], singlePlayerScore[1] + 1, singlePlayerScore[2]]
+        : [twoPlayerScore[0], twoPlayerScore[1] + 1, twoPlayerScore[2]];
+    } else {
+      // It's a tie
+      return computerEnabled
+        ? [singlePlayerScore[0], singlePlayerScore[1], singlePlayerScore[2] + 1]
+        : [twoPlayerScore[0], twoPlayerScore[1], twoPlayerScore[2] + 1];
+    }
+  };
+
   const renderScores = () => {
     return computerEnabled ? (
       <div className="button-container">
-        <div>Wins: {singlePlayerScore[0]}</div>
-        <div>Losses: {singlePlayerScore[1]}</div>
+        <div>Wins: {singlePlayerScore[0]}&nbsp;&nbsp;</div>
+        <div>Losses: {singlePlayerScore[1]}&nbsp;&nbsp;</div>
         <div>Ties: {singlePlayerScore[2]}</div>
       </div>
     ) : (
       <div className="button-container">
-        <div>Wins: {twoPlayerScore[0]}</div>
-        <div>Losses: {twoPlayerScore[1]}</div>
+        <div>X Wins: {twoPlayerScore[0]} &nbsp;&nbsp;</div>
+        <div>Y Wins: {twoPlayerScore[1]} &nbsp;&nbsp;</div>
         <div>Ties: {twoPlayerScore[2]}</div>
       </div>
     );
   };
-  const winner = calculateWinner(board);
+  const winner = calculateWinner(board, updateScores);
   let status;
   if (winner === 'Tie') {
     status = 'It\'s a tie!';
@@ -133,14 +156,15 @@ function Game() {
           New Game
         </button>
         <button className="rainbow-button" onClick={toggleComputerEnabled}>
-          {computerEnabled ? '2 Player' : '1 Player'}
+          {computerEnabled ? '1 Player' : '2 Player'}
         </button>
       </div>
       {renderScores()}
     </div>
   );
 }
-function calculateWinner(squares) {
+
+function calculateWinner(squares, updateScores) {
   const lines = [
     [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
     [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
@@ -150,10 +174,12 @@ function calculateWinner(squares) {
   for (const line of lines) {
     const [a, b, c] = line;
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+      updateScores(squares[a]);
       return squares[a]; // Return the winning symbol (X or O)
     }
   }
   if (squares.every((square) => square)) {
+    updateScores(null);
     return 'Tie'; // Return 'Tie' if all squares are filled with no winner
   }
   return null; // no winner
@@ -172,7 +198,6 @@ function calculateWinningSquares(squares, winner) {
       return line.slice();
     }
   }
-
   return [];
 }
 
