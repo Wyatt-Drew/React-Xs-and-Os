@@ -36,7 +36,7 @@ function Game() {
   }
   const handleClick = (index) => {
     let isCompTurn = computerEnabled && !xIsNext;
-    if (playerHasMoved == null && !isCompTurn) {
+    if (playerHasMoved == null && !isCompTurn && !board[index]) {
       setPlayerHasMoved(index); // Set to the index of the clicked square
     }
   };
