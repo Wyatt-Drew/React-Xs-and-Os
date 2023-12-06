@@ -10,12 +10,14 @@ function Game() {
   const [playerHasMoved, setPlayerHasMoved] = useState(null);
   const [singlePlayerScore, setSinglePlayerScore] = useState([0,0,0]);
   const [twoPlayerScore, setTwoPlayerScore] = useState([1,2,3]);
+  const [gameIsOver, setGameIsOver] = useState(false);
   
   const resetGame = ()  => {
     setBoard(Array(9).fill(null));
     setWinningSquares([]);
     setXIsNext(true);
     setPlayerHasMoved(null);
+    setGameIsOver(false);
   }
   const toggleComputerEnabled = ()  => {
     setComputerEnabled(!computerEnabled);
@@ -70,16 +72,17 @@ function Game() {
     }
 
     const winner = calculateWinner(board, updateScores);
-    if (winner) {
+    if (winner && !gameIsOver) {
       const updatedScores = updateScores(winner);
       if (computerEnabled) {
         setSinglePlayerScore(updatedScores);
       } else {
         setTwoPlayerScore(updatedScores);
       }
+      setGameIsOver(true);
       setWinningSquares(calculateWinningSquares(board, winner));
     }
-  }, [playerHasMoved, xIsNext, computerEnabled, board]);
+  }, [playerHasMoved, xIsNext, computerEnabled, board, gameIsOver]);
   
 
   const renderSquare = (index) => {
