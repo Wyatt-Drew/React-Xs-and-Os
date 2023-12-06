@@ -7,13 +7,13 @@ function Game() {
   const [winningSquares, setWinningSquares] = useState([]);
   const [xIsNext, setXIsNext] = useState(true);
   const [computerEnabled, setComputerEnabled] = useState(false);
-  const [playerHasMoved, setPlayerHasMoved] = useState(false);
+  const [playerHasMoved, setPlayerHasMoved] = useState(null);
   
   const resetGame = ()  => {
     setBoard(Array(9).fill(null));
     setWinningSquares([]);
     setXIsNext(true);
-    setPlayerHasMoved(false);
+    setPlayerHasMoved(null);
   }
   const toggleComputerEnabled = ()  => {
     setComputerEnabled(!computerEnabled);
@@ -32,12 +32,12 @@ function Game() {
     }
     setBoard(newBoard);
     setXIsNext((XIsNext) => !XIsNext); //functional form ensures states are up to date
+    setPlayerHasMoved(null);
   }
   const handleClick = (index) => {
-    if (!playerHasMoved && !(computerEnabled && !xIsNext)) //only allow 1 move at a time
-    {
-      move(index); // Directly make the move
-      setPlayerHasMoved(true); // Set to true to prevent additional moves
+    let isCompTurn = computerEnabled && !xIsNext;
+    if (playerHasMoved == null && !isCompTurn) {
+      setPlayerHasMoved(index); // Set to the index of the clicked square
     }
   };
   const getRandomInt = (min, max) => {
@@ -60,20 +60,19 @@ function Game() {
   };
   //This section performs synchronously whenever the computer or player make a move
   useEffect(() => {
-    //handle all moves
-    if (playerHasMoved && xIsNext)
-    {
-      setPlayerHasMoved(false);
-    }else {
-      if (computerEnabled && !xIsNext) {
-        computerMove();
-      }
+    // handle all moves
+    if (!xIsNext && computerEnabled) {
+      computerMove();
+    } else if (playerHasMoved !== null) {
+      move(playerHasMoved);
     }
+  
     const winner = calculateWinner(board);
     if (winner) {
       setWinningSquares(calculateWinningSquares(board, winner));
     }
-  }, [playerHasMoved, xIsNext, computerEnabled, board]); //All dependancies
+  }, [playerHasMoved, xIsNext, computerEnabled, board]);
+  
 
   const renderSquare = (index) => {
     const isWinningSquare = winningSquares.includes(index);
