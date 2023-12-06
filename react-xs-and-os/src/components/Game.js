@@ -9,7 +9,7 @@ function Game() {
   const [computerEnabled, setComputerEnabled] = useState(false);
   const [playerHasMoved, setPlayerHasMoved] = useState(null);
   const [singlePlayerScore, setSinglePlayerScore] = useState([0,0,0]);
-  const [twoPlayerScore, setTwoPlayerScore] = useState([1,2,3]);
+  const [twoPlayerScore, setTwoPlayerScore] = useState([0,0,0]);
   const [gameIsOver, setGameIsOver] = useState(false);
   
   const resetGame = ()  => {
