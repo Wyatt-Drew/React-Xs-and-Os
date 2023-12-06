@@ -7,11 +7,13 @@ function Game() {
   const [winningSquares, setWinningSquares] = useState([]);
   const [xIsNext, setXIsNext] = useState(true);
   const [computerEnabled, setComputerEnabled] = useState(false);
+  const [playerHasMoved, setPlayerHasMoved] = useState(false);
   
   const resetGame = ()  => {
     setBoard(Array(9).fill(null));
     setWinningSquares([]);
     setXIsNext(true);
+    setPlayerHasMoved(false);
   }
   const toggleComputerEnabled = ()  => {
     setComputerEnabled(!computerEnabled);
@@ -32,13 +34,16 @@ function Game() {
     setXIsNext((XIsNext) => !XIsNext); //functional form ensures states are up to date
   }
   const handleClick = (index) => {
-    move(index);
+    if (!playerHasMoved && !(computerEnabled && !xIsNext)) //only allow 1 move at a time
+    {
+      move(index); // Directly make the move
+      setPlayerHasMoved(true); // Set to true to prevent additional moves
+    }
   };
   const getRandomInt = (min, max) => {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   };
   const computerMove = () => {
-    console.log("Entering computer");
     // Gather all empty squares
     const emptySquares = [];
     board.forEach((square, index) => {
@@ -46,30 +51,29 @@ function Game() {
         emptySquares.push(index);
       }
     });
+  
     // If there are empty squares, update the board state
     if (emptySquares.length > 0) {
-      const randomIndex = getRandomInt(0, emptySquares.length - 1);
-      const newBoard = [...board];
-      newBoard[randomIndex] = xIsNext ? 'X' : 'O';
-  
-      const winner = calculateWinner(newBoard);
-      if (winner) {
-        setWinningSquares(calculateWinningSquares(newBoard, winner));
-      }
-  
-      setBoard(newBoard);
-      setXIsNext((XIsNext) => !XIsNext);
+      const randomIndex = emptySquares[getRandomInt(0, emptySquares.length - 1)];
+      move(randomIndex);
     }
-  }
-  
+  };
+  //This section performs synchronously whenever the computer or player make a move
   useEffect(() => {
-    if (computerEnabled && !xIsNext) {
-      const timerId = setTimeout(() => {
+    //handle all moves
+    if (playerHasMoved && xIsNext)
+    {
+      setPlayerHasMoved(false);
+    }else {
+      if (computerEnabled && !xIsNext) {
         computerMove();
-      }, 100); // Using setTimeout to ensure it runs after state update
-      return () => clearTimeout(timerId); // Cleanup the timer on component unmount
+      }
     }
-  }, [xIsNext]);
+    const winner = calculateWinner(board);
+    if (winner) {
+      setWinningSquares(calculateWinningSquares(board, winner));
+    }
+  }, [playerHasMoved, xIsNext, computerEnabled, board]); //All dependancies
 
   const renderSquare = (index) => {
     const isWinningSquare = winningSquares.includes(index);
