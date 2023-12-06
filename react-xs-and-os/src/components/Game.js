@@ -2,7 +2,7 @@ import './Game.css';
 import './RainbowButton.css';
 import React, { useState, useEffect } from 'react';
 import backgroundMusic from "../assets/background.mp3";
-
+import moveSound from "../assets/move.wav";
 
 function Game() {
   const [board, setBoard] = useState(Array(9).fill(null));
@@ -38,6 +38,15 @@ function Game() {
       return !prevSoundEnabled;
     });
   }
+  function audioFeedback() {
+    if(soundEnabled)
+    {
+      const audio = new Audio(moveSound);
+      audio.play().catch(error => console.error('Error playing audio:', error));
+    }
+  }
+
+
   const move = (index) => {
     const newBoard = [...board];
     if (calculateWinner(newBoard, updateScores) || newBoard[index]) {
@@ -84,6 +93,9 @@ function Game() {
       computerMove();
     } else if (playerHasMoved !== null) {
       move(playerHasMoved);
+      if (!gameIsOver){
+        audioFeedback();
+      }
     }
 
     const winner = calculateWinner(board, updateScores);
