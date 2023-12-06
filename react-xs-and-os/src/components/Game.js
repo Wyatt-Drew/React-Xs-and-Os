@@ -1,21 +1,26 @@
 import './Game.css';
 import './RainbowButton.css';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 function Game() {
   const [board, setBoard] = useState(Array(9).fill(null));
   const [winningSquares, setWinningSquares] = useState([]);
   const [xIsNext, setXIsNext] = useState(true);
+  const [computerEnabled, setComputerEnabled] = useState(false);
   
   const resetGame = ()  => {
     setBoard(Array(9).fill(null));
     setWinningSquares([]);
     setXIsNext(true);
   }
-  const handleClick = (index) => {
+  const toggleComputerEnabled = ()  => {
+    setComputerEnabled(!computerEnabled);
+    resetGame();
+  }
+  const move = (index) => {
     const newBoard = [...board];
     if (calculateWinner(newBoard) || newBoard[index]) {
-      return; // do nothing if there's a winner
+      return; // do nothing if there's a winner or sq is full
     }
     newBoard[index] = xIsNext ? 'X' : 'O';
 
@@ -23,10 +28,48 @@ function Game() {
     if (winner) {
       setWinningSquares(calculateWinningSquares(newBoard, winner));
     }
-
     setBoard(newBoard);
-    setXIsNext(!xIsNext);
+    setXIsNext((XIsNext) => !XIsNext); //functional form ensures states are up to date
+  }
+  const handleClick = (index) => {
+    move(index);
   };
+  const getRandomInt = (min, max) => {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  };
+  const computerMove = () => {
+    console.log("Entering computer");
+    // Gather all empty squares
+    const emptySquares = [];
+    board.forEach((square, index) => {
+      if (!square) {
+        emptySquares.push(index);
+      }
+    });
+    // If there are empty squares, update the board state
+    if (emptySquares.length > 0) {
+      const randomIndex = getRandomInt(0, emptySquares.length - 1);
+      const newBoard = [...board];
+      newBoard[randomIndex] = xIsNext ? 'X' : 'O';
+  
+      const winner = calculateWinner(newBoard);
+      if (winner) {
+        setWinningSquares(calculateWinningSquares(newBoard, winner));
+      }
+  
+      setBoard(newBoard);
+      setXIsNext((XIsNext) => !XIsNext);
+    }
+  }
+  
+  useEffect(() => {
+    if (computerEnabled && !xIsNext) {
+      const timerId = setTimeout(() => {
+        computerMove();
+      }, 100); // Using setTimeout to ensure it runs after state update
+      return () => clearTimeout(timerId); // Cleanup the timer on component unmount
+    }
+  }, [xIsNext]);
 
   const renderSquare = (index) => {
     const isWinningSquare = winningSquares.includes(index);
@@ -56,21 +99,18 @@ function Game() {
       <button className="rainbow-button" onClick={resetGame}>
         New Game
       </button>
+      <button className="rainbow-button" onClick={toggleComputerEnabled}>
+        {computerEnabled ? '2 Player' : '1 Player'}
+      </button>
       <div className="board">
         <div className="board-row">
-          {renderSquare(0)}
-          {renderSquare(1)}
-          {renderSquare(2)}
+          {renderSquare(0)}{renderSquare(1)}{renderSquare(2)}
         </div>
         <div className="board-row">
-          {renderSquare(3)}
-          {renderSquare(4)}
-          {renderSquare(5)}
+          {renderSquare(3)}{renderSquare(4)}{renderSquare(5)}
         </div>
         <div className="board-row">
-          {renderSquare(6)}
-          {renderSquare(7)}
-          {renderSquare(8)}
+          {renderSquare(6)}{renderSquare(7)}{renderSquare(8)}
         </div>
       </div>
       <div className="status">{status}</div>
