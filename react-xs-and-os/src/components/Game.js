@@ -8,6 +8,8 @@ function Game() {
   const [xIsNext, setXIsNext] = useState(true);
   const [computerEnabled, setComputerEnabled] = useState(false);
   const [playerHasMoved, setPlayerHasMoved] = useState(null);
+  const [singlePlayerScore, setSinglePlayerScore] = useState([0,0,0]);
+  const [twoPlayerScore, setTwoPlayerScore] = useState([0,0,0]);
   
   const resetGame = ()  => {
     setBoard(Array(9).fill(null));
@@ -86,7 +88,21 @@ function Game() {
       </button>
     );
   };
-
+  const renderScores = () => {
+    return computerEnabled ? (
+      <div className="button-container">
+        <div>Wins: {singlePlayerScore[0]}</div>
+        <div>Losses: {singlePlayerScore[1]}</div>
+        <div>Ties: {singlePlayerScore[2]}</div>
+      </div>
+    ) : (
+      <div className="button-container">
+        <div>Wins: {twoPlayerScore[0]}</div>
+        <div>Losses: {twoPlayerScore[1]}</div>
+        <div>Ties: {twoPlayerScore[2]}</div>
+      </div>
+    );
+  };
   const winner = calculateWinner(board);
   let status;
   if (winner === 'Tie') {
@@ -99,12 +115,7 @@ function Game() {
   }
   return (
     <div className="game">
-      <button className="rainbow-button" onClick={resetGame}>
-        New Game
-      </button>
-      <button className="rainbow-button" onClick={toggleComputerEnabled}>
-        {computerEnabled ? '2 Player' : '1 Player'}
-      </button>
+      <div className="status">{status}</div>
       <div className="board">
         <div className="board-row">
           {renderSquare(0)}{renderSquare(1)}{renderSquare(2)}
@@ -116,7 +127,16 @@ function Game() {
           {renderSquare(6)}{renderSquare(7)}{renderSquare(8)}
         </div>
       </div>
-      <div className="status">{status}</div>
+      
+      <div className="button-container">
+        <button className="rainbow-button" onClick={resetGame}>
+          New Game
+        </button>
+        <button className="rainbow-button" onClick={toggleComputerEnabled}>
+          {computerEnabled ? '2 Player' : '1 Player'}
+        </button>
+      </div>
+      {renderScores()}
     </div>
   );
 }

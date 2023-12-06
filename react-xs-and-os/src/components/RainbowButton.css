@@ -1,3 +1,9 @@
+.button-container {
+  display: flex;
+  gap: 10px; 
+  color:white;
+}
+
 .rainbow-button {
     width: 130px;
     height: 25px;
@@ -9,7 +15,7 @@
     position: relative;
     z-index: 0;
     border-radius: 10px;
-    margin-bottom: 5px;
+    margin: 5px;
     font-weight: bold;
     font-size: 20px;
   }
