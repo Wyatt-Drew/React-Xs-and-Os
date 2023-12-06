@@ -11,12 +11,12 @@
 
 .board {
   display: grid;
-  grid-template-columns: repeat(3, 100px);
+  grid-template-columns: repeat(3, 130px);
 }
 
 .square {
-  width: 100px;
-  height: 100px;
+  width: 130px;
+  height: 130px;
   font-size: 0px;
   text-align: center;
   border: 2px solid black;
@@ -25,7 +25,7 @@
 }
 .square.clicked{
   transition: font-size 0.3s ease;
-  font-size: 50px;
+  font-size: 80px;
 }
 .square.winning{
   background-color: #228B22; 

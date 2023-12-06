@@ -28,14 +28,15 @@ function Game() {
     resetGame();
   }
   function toggleBackgroundMusic() {
-    setSoundEnabled((prevSoundEnabled) => !prevSoundEnabled);
-  
-    if (soundEnabled) {
-      audio.loop = true; // Enable looping
-      audio.play();
-    } else {
-      audio.pause();
-    }
+    setSoundEnabled((prevSoundEnabled) => {
+      if (!prevSoundEnabled) {
+        audio.loop = true; // Enable looping
+        audio.play().catch(error => console.error('Error playing audio:', error));
+      } else {
+        audio.pause();
+      }
+      return !prevSoundEnabled;
+    });
   }
   const move = (index) => {
     const newBoard = [...board];
@@ -175,10 +176,10 @@ function Game() {
         <button className="rainbow-button" onClick={toggleComputerEnabled}>
           {computerEnabled ? '1 Player' : '2 Player'}
         </button>
-      </div>
-      <button className="rainbow-button" onClick={toggleBackgroundMusic}>
+        <button className="rainbow-button" onClick={toggleBackgroundMusic}>
         {soundEnabled ? 'Mute' : 'Unmute'}
-      </button>
+        </button>
+      </div>
       {renderScores()}
     </div>
   );
