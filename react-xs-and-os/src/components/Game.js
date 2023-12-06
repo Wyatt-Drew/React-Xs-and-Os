@@ -1,6 +1,8 @@
 import './Game.css';
 import './RainbowButton.css';
 import React, { useState, useEffect } from 'react';
+import backgroundMusic from "../assets/background.mp3";
+
 
 function Game() {
   const [board, setBoard] = useState(Array(9).fill(null));
@@ -11,6 +13,7 @@ function Game() {
   const [singlePlayerScore, setSinglePlayerScore] = useState([0,0,0]);
   const [twoPlayerScore, setTwoPlayerScore] = useState([0,0,0]);
   const [gameIsOver, setGameIsOver] = useState(false);
+  
   
   const resetGame = ()  => {
     setBoard(Array(9).fill(null));
@@ -162,11 +165,14 @@ function Game() {
           {computerEnabled ? '1 Player' : '2 Player'}
         </button>
       </div>
+      <button className="rainbow-button" onClick={toggleBackgroundMusic}>Toggle Background Music</button>
       {renderScores()}
     </div>
   );
 }
-
+function toggleBackgroundMusic(){
+  new Audio(backgroundMusic).play()
+}
 function calculateWinner(squares, updateScores) {
   const lines = [
     [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
