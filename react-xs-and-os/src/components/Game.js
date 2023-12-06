@@ -13,8 +13,9 @@ function Game() {
   const [singlePlayerScore, setSinglePlayerScore] = useState([0,0,0]);
   const [twoPlayerScore, setTwoPlayerScore] = useState([0,0,0]);
   const [gameIsOver, setGameIsOver] = useState(false);
-  
-  
+  const [soundEnabled, setSoundEnabled] = useState(false);
+  const [audio] = useState(new Audio(backgroundMusic));
+
   const resetGame = ()  => {
     setBoard(Array(9).fill(null));
     setWinningSquares([]);
@@ -25,6 +26,16 @@ function Game() {
   const toggleComputerEnabled = ()  => {
     setComputerEnabled(!computerEnabled);
     resetGame();
+  }
+  function toggleBackgroundMusic() {
+    setSoundEnabled((prevSoundEnabled) => !prevSoundEnabled);
+  
+    if (soundEnabled) {
+      audio.loop = true; // Enable looping
+      audio.play();
+    } else {
+      audio.pause();
+    }
   }
   const move = (index) => {
     const newBoard = [...board];
@@ -165,14 +176,14 @@ function Game() {
           {computerEnabled ? '1 Player' : '2 Player'}
         </button>
       </div>
-      <button className="rainbow-button" onClick={toggleBackgroundMusic}>Toggle Background Music</button>
+      <button className="rainbow-button" onClick={toggleBackgroundMusic}>
+        {soundEnabled ? 'Mute' : 'Unmute'}
+      </button>
       {renderScores()}
     </div>
   );
 }
-function toggleBackgroundMusic(){
-  new Audio(backgroundMusic).play()
-}
+
 function calculateWinner(squares, updateScores) {
   const lines = [
     [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
